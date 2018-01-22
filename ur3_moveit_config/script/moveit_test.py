@@ -41,8 +41,8 @@ def move_group_python_interface_tutorial():
   print "============ Printing robot state"
   print robot.get_current_state()
   print "============"
+  group.set_max_velocity_scaling_factor(0.1) 
 
-  group.set_max_velocity_scaling_factor(0.01) 
 #   group.set_max_acceleration_scaling_factor(0.1)
 
   ## Planning to a Pose goal
@@ -71,23 +71,29 @@ def move_group_python_interface_tutorial():
   group.go(wait=True)
   group.execute(plan1)
 
-  print "============ Generating plan 1"
-  group.clear_pose_targets()
-  group.set_start_state_to_current_state()
-  pose_target = group.get_current_pose().pose
-  pose_target.position.x -= 0.1
-  group.set_pose_target(pose_target)
-  plan1 = group.plan()
-  print "============ Waiting while RVIZ displays plan1..."
-  rospy.sleep(3)
-  print "============ Visualizing plan1"
-  display_trajectory = moveit_msgs.msg.DisplayTrajectory()
-  display_trajectory.trajectory_start = robot.get_current_state()
-  display_trajectory.trajectory.append(plan1)
-  display_trajectory_publisher.publish(display_trajectory);
-  rospy.sleep(2)
-  group.go(wait=True)
-  group.execute(plan1)
+  group.set_max_velocity_scaling_factor(0.1) 
+
+
+  print "============ Generating plan 2"
+  for i in range(3):
+      group.clear_pose_targets()
+      group.set_start_state_to_current_state()
+      pose_target.position.x += 0.05
+      print pose_target
+      group.set_pose_target(pose_target)
+      plan1 = group.plan()
+      group.go(wait=True)
+      group.execute(plan1)
+      
+      rospy.sleep(0.5)
+      group.clear_pose_targets()
+      group.set_start_state_to_current_state()
+      pose_target.position.y -= 0.05
+      print pose_target
+      group.set_pose_target(pose_target)
+      plan1 = group.plan()
+      group.go(wait=True)
+      group.execute(plan1)
 
 
 

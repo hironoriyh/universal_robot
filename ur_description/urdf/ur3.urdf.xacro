@@ -61,6 +61,28 @@
 
 
   <xacro:macro name="ur3_robot" params="prefix joint_limited">
+  
+  	    
+    <joint name="${prefix}base_plate" type="fixed">
+      <parent link="${prefix}base_link" />
+      <child link = "${prefix}base_plate_link" />
+      <origin xyz="0 0 0" rpy="0 0 0" />
+    </joint>
+
+    <link name="${prefix}base_plate_link">
+     <visual>
+        <geometry>
+          <box size="1.0 1.0 0.01"/>
+        </geometry>
+      </visual>
+        
+      <collision>
+        <geometry>
+          <box size="1.0 1.0 0.01"/>
+        </geometry>
+      </collision>
+    <origin rpy="0 0 0" xyz="0 0 -0.05"/>
+    </link>
 
     <link name="${prefix}base_link" >
       <visual>
