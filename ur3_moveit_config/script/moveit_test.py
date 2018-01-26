@@ -23,7 +23,7 @@ def move_group_python_interface_tutorial():
     moveit_commander.roscpp_initialize(sys.argv)
     rospy.init_node('move_group_python_interface_tutorial', anonymous=True)
     ## the robot as a whole.
-    robot =
+    robot = moveit_commander.RobotCommander()
     scene = moveit_commander.PlanningSceneInterface()
     group = moveit_commander.MoveGroupCommander("manipulator")
     display_trajectory_publisher = rospy.Publisher(
@@ -31,69 +31,39 @@ def move_group_python_interface_tutorial():
                                     moveit_msgs.msg.DisplayTrajectory,
                                     queue_size=20)
 
-    print "============ Waiting for RVIZ..."
-    rospy.sleep(0.5)
-    print "============ Starting tutorial "
-
-    ## Getting Basic Information
-    print "============ Reference frame: %s" % group.get_planning_frame()
-    print "============ Reference frame: %s" % group.get_end_effector_link()
-    print   group.get_current_pose()
-    print "============ Robot Groups:"
-    print robot.get_group_names()
-    print "============ Printing robot state"
-    print robot.get_current_state()
-    print "============"
-    group.set_max_velocity_scaling_factor(0.05)
-    #   group.set_max_acceleration_scaling_factor(0.1)
-
-    # Planning to a Pose goal
     print "============ Going up"
-    moveRelativePt([0.0, 0, 0.2], 0.05)
+    moveAbsPt(group, [0.2, 0.2, 0.3], 0.05)
+
     print "============ Side cut 1"
-    side_cut_1 =  np.loadtxt('1_first_sidecut_N.txt')
+    side_cut_1 =  np.loadtxt('1_first_sidecut_N.txt')*0.001
+    # side_cut_1 += 100
+    # np.ndarray( )
+    home_pos = group.get_current_pose().pose.position
+    print home_pos
+    tool_length = 0.15
     for pt in side_cut_1:
-        moveRelativePt(pt)
+        world_point = [home_pos.x + pt[0], home_pos.y + pt[1], pt[2] + tool_length]
+        print world_point
+        moveAbsPt(group, pt, 0.005)
 
     moveit_commander.roscpp_shutdown()
     print "============ STOPPING"
-class MoveMilling:
-    def __init__(self, move_group, robot, scene):
-        self.robot = moveit_commander.RobotCommander()
-        self.scene = moveit_commander.PlanningSceneInterface()
-        self.group = moveit_commander.MoveGroupCommander("manipulator")
 
-    def moveRelativePt(self, pt, speed):
-        if(speed):
-            self.group.set_max_velocity_scaling_factor(0.005)
+def moveAbsPt(group, pt, speed):
+    # if(speed):
+    group.set_max_velocity_scaling_factor(speed)
 
-        self.group.clear_pose_targets()
-        self.group.set_start_state_to_current_state()
-        pose_target = self.group.get_current_pose().pose
+    group.clear_pose_targets()
+    group.set_start_state_to_current_state()
+    pose_target = group.get_current_pose().pose
 
-        pose_target.position.x += pt[0]
-        pose_target.position.y += pt[1]
-        pose_target.position.z += pt[2]
+    pose_target.position.x = pt[0]
+    pose_target.position.y = pt[1]
+    pose_target.position.z = pt[2]
 
-        self.group.set_pose_target(pose_target)
-        plan1 = self.group.plan()
-        self.group.go(wait=True)
-
-    def moveAbsPt(self, pt, speed):
-        if(speed):
-            self.group.set_max_velocity_scaling_factor(speed)
-
-        self.group.clear_pose_targets()
-        self.group.set_start_state_to_current_state()
-        pose_target = self.group.get_current_pose().pose
-
-        pose_target.position.x = pt[0]
-        pose_target.position.y = pt[1]
-        pose_target.position.z = pt[2]
-
-        self.group.set_pose_target(pose_target)
-        plan1 = self.group.plan()
-        self.group.go(wait=True)
+    group.set_pose_target(pose_target)
+    plan1 = group.plan()
+    group.go(wait=True)
 
 if __name__=='__main__':
   try:
