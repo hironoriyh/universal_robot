@@ -32,7 +32,10 @@ def move_group_python_interface_tutorial():
                                     queue_size=20)
 
     print "============ Going up"
-    moveAbsPt(group, [0.2, 0.2, 0.3], 0.05)
+    moveRelativePt(group, [0.0, 0.0, 0.01], 0.05)
+
+    group_variable_values = [-5.64, -1.60, -1.61, 3.17, -0.90, -3.13]
+    # moveJoint(group, group_variable_values, 0.05)
 
     print "============ Side cut 1"
     side_cut_1 =  np.loadtxt('1_first_sidecut_N.txt')*0.001
@@ -48,6 +51,34 @@ def move_group_python_interface_tutorial():
 
     moveit_commander.roscpp_shutdown()
     print "============ STOPPING"
+
+def moveJoint(group, group_variable_values, speed):
+    group.set_max_velocity_scaling_factor(speed)
+
+    group.clear_pose_targets()
+    group_variable_values = group.get_current_joint_values()
+    print "============ Joint values: ", group_variable_values
+    group.set_joint_value_target(group_variable_values)
+    plan1 = group.plan()
+    group.go(wait=True)
+    rospy.sleep(1)
+
+def moveRelativePt(group, pt, speed):
+    # if(speed):
+    group.set_max_velocity_scaling_factor(speed)
+
+    group.clear_pose_targets()
+    group.set_start_state_to_current_state()
+    pose_target = group.get_current_pose().pose
+    print "------------------- current pose -----", pose_target.position
+    pose_target.position.x += pt[0]
+    pose_target.position.y += pt[1]
+    pose_target.position.z += pt[2]
+    print "------------------- after update pose -----", pose_target.position
+
+    group.set_pose_target(pose_target)
+    plan1 = group.plan()
+    group.go(wait=True)
 
 def moveAbsPt(group, pt, speed):
     # if(speed):
