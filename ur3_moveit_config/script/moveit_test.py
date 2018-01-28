@@ -41,25 +41,14 @@ def milling_paths():
 
     print "============ Going up"
     moveRelativePt(group, [0.0, 0.0, 0.05], 0.05)
-    # moveRelativePt(group, [-0.08, -0.0, 0.0172100525103], 0.01)
 
     print "============ Side cut 1"
-    side_cut_1 =  np.loadtxt('brT/1_first_sidecut_T1.txt')*0.001
-    moveRelRotPt(group, side_cut_1[0], org_pose, 0.05)
+    side_cut_1 =  np.loadtxt('brT/2_second_sidecut_T1.txt')*0.001
+    point_up = [side_cut_1[0][0], side_cut_1[0][1], 0.05] # x, y is swapped
+    moveRelRotPt(group, point_up, org_pose, 0.05)
     rospy.sleep(1.0)
-    # moveRelRotPt(group, side_cut_1[0], org_pose, 0.05)
 
-    # io = SetIO
-    # io.fun = 1
-    # io.pin = 4
-    # io.state = 1.0
-    # rospy.wait_for_service('ur_driver/set_io')
-    # try:
-    #     set_io = rospy.ServiceProxy('ur_driver/set_io', SetIO)
-    # service = rospy.Service('ur_driver/set_io', SetIO, setio_callback)
-
-    # moveCartesianPath(group, side_cut_1[:20], org_pose, 0.001, 0.001)
-
+    moveRelRotPt(group, side_cut_1[0], org_pose, 0.05)
     for pt in  side_cut_1:
         moveRelRotPt(group, pt, org_pose, 0.01)
     print "finished!"
@@ -110,7 +99,7 @@ def moveRelRotPt(group, pt, org_pose, speed):
     pose_target = copy.deepcopy(org_pose)
     print "--------rel move -----", pt
     # print "------------------- current pose -----", pose_target.position
-    pose_target.position.x += pt[1]
+    pose_target.position.x -= pt[1]
     pose_target.position.y += pt[0]
     pose_target.position.z += pt[2]
     # print "------------------- after update pose -----", pose_target.position
