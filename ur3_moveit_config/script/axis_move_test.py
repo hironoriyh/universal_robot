@@ -11,14 +11,13 @@ import moveit_commander
 import moveit_msgs.msg
 import geometry_msgs.msg
 import copy
-from ur_msgs.srv import SetIO
 ## END_SUB_TUTORIAL
 
 import numpy as np
 
 from std_msgs.msg import String
 
-def milling_paths():
+def axis_move_test():
 
     print "============ Starting tutorial setup"
     moveit_commander.roscpp_initialize(sys.argv)
@@ -33,38 +32,27 @@ def milling_paths():
                                     queue_size=20)
 
     print "current joint values:  ", group.get_current_joint_values()
-    group_variable_values = [-5.554026071225302, -1.7539408842669886, -1.6314790884601038, 3.347646713256836, -0.9896319548236292, -3.108539406453268]
-    # group_variable_values = [-5.331279043351309, -1.381209675465719, -2.1003029982196253, 3.4650821685791016, -0.5601938406573694, -3.156151835118429]
+    print "current positino:  \n", group.get_current_pose().pose.position
+
+    group_variable_values = [-5.403968636189596, -1.7618020216571253, -1.6557276884662073, 3.3749208450317383, -0.8409798781024378, -3.101166311894552]
     moveJoint(group, group_variable_values, 0.05)
-    org_pose = group.get_current_pose().pose
-    print " org pos: " , org_pose
 
     print "============ Going up"
     moveRelativePt(group, [0.0, 0.0, 0.05], 0.05)
     # moveRelativePt(group, [-0.08, -0.0, 0.0172100525103], 0.01)
 
-    print "============ Side cut 1"
-    side_cut_1 =  np.loadtxt('brT/1_first_sidecut_T1.txt')*0.001
-    moveRelRotPt(group, side_cut_1[0], org_pose, 0.05)
-    rospy.sleep(1.0)
-    # moveRelRotPt(group, side_cut_1[0], org_pose, 0.05)
+    print "============ move` 1"
+    point_1 = [0, -0.15, -0.04]
+    moveRelativePt(group, point_1, 0.05)
+    rospy.sleep(3)
+    print "============ Going up"
+    moveRelativePt(group, [0.0, 0.0, 0.05], 0.05)
 
-    # io = SetIO
-    # io.fun = 1
-    # io.pin = 4
-    # io.state = 1.0
-    # rospy.wait_for_service('ur_driver/set_io')
-    # try:
-    #     set_io = rospy.ServiceProxy('ur_driver/set_io', SetIO)
-    # service = rospy.Service('ur_driver/set_io', SetIO, setio_callback)
-
-    # moveCartesianPath(group, side_cut_1[:20], org_pose, 0.001, 0.001)
-
-    for pt in  side_cut_1:
-        moveRelRotPt(group, pt, org_pose, 0.01)
-    print "finished!"
-# def setio_callback(req):
-#     # req
+    print "============ move` 2"
+    point_1 = [0, 0.3, -0.04]
+    moveRelativePt(group, point_1, 0.05)
+    print "============ Going up"
+    moveRelativePt(group, [0.0, 0.0, 0.05], 0.05)
 
 def moveJoint(group, group_variable_values, speed):
     group.set_start_state_to_current_state()
@@ -77,7 +65,7 @@ def moveJoint(group, group_variable_values, speed):
     # group.execute(plan1)
     rospy.sleep(1)
 
-def moveCartesianPath(group, pts, org_pose, speed, steps):
+def moveCartesianPath(group, pts, org_pose, speed):
     group.set_max_velocity_scaling_factor(speed)
     waypoints = []
     waypoints.append(group.get_current_pose().pose)
@@ -89,18 +77,14 @@ def moveCartesianPath(group, pts, org_pose, speed, steps):
         pose_target.position.y += pt[0]
         pose_target.position.z += pt[2]
         waypoints.append(pose_target)
-        print pose_target.position.z
-
+    print "waypoints" , waypoints[:5]
     (plan, fraction) = group.compute_cartesian_path(
                                  waypoints,   # waypoints to follow
-                                 steps,        # eef_step
+                                 0.00001,        # eef_step
                                  0.0)         # jump_threshold
-    # group.go(wait=True)
-    print 'cartesian path start cutting!'
     # group.go(wait=True)
     group.execute(plan)
     rospy.sleep(1)
-    print 'cartesian path finished!'
 
 def moveRelRotPt(group, pt, org_pose, speed):
     # if(speed):
@@ -119,7 +103,7 @@ def moveRelRotPt(group, pt, org_pose, speed):
     group.set_pose_target(pose_target)
     plan1 = group.plan()
     group.go(wait=True)
-    rospy.sleep(0.01)
+    rospy.sleep(1)
 
 def moveRelativePt(group, pt, speed):
     # if(speed):
@@ -158,6 +142,6 @@ def moveAbsPt(group, pt, speed):
 
 if __name__=='__main__':
   try:
-    milling_paths()
+    axis_move_test()
   except rospy.ROSInterruptException:
     pass
