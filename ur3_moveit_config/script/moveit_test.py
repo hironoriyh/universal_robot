@@ -20,6 +20,8 @@ from std_msgs.msg import String
 
 def milling_paths():
 
+    speed_move = 1.0
+    speed_cut = 0.1
     print "============ setup"
     moveit_commander.roscpp_initialize(sys.argv)
     rospy.init_node('moveit_milling', anonymous=True)
@@ -29,7 +31,7 @@ def milling_paths():
     group = moveit_commander.MoveGroupCommander("manipulator")
     # interface = group.MoveGroupInterface()
     # group.setPlannerId('')
-    # group.setPlanningTime(10)
+    group.setPlanningTime(10)
 
     display_trajectory_publisher = rospy.Publisher(
                                     '/move_group/display_planned_path',
@@ -37,25 +39,24 @@ def milling_paths():
                                     queue_size=20)
     # group.set
     print "current joint values:  ", group.get_current_joint_values()
-    group_variable_values = [-5.554026071225302, -1.7539408842669886, -1.6314790884601038, 3.347646713256836, -0.9896319548236292, -3.108539406453268]
-    # group_variable_values = [-5.331279043351309, -1.381209675465719, -2.1003029982196253, 3.4650821685791016, -0.5601938406573694, -3.156151835118429]
-    moveJoint(group, group_variable_values, 0.05)
+    group_variable_values = [-5.5, -1.753, -1.63, 3.347, -0.9896, -3.108]
+    moveJoint(group, group_variable_values, speed_move)
     org_pose = group.get_current_pose().pose
     print " org pos: " , org_pose
 
     print "============ Going up"
-    moveRelativePt(group, [0.0, 0.0, 0.05], 0.05)
+    moveRelativePt(group, [0.0, 0.0, 0.05], speed_move)
 
     print "============ Side cut 1"
     # side_cut_1 =  np.loadtxt('brT/1_first_sidecut_T1.txt')*0.001
     side_cut_1 =  np.loadtxt('brT/2_second_sidecut_T1.txt')*0.001
-    point_up = [side_cut_1[0][0], side_cut_1[0][1], 0.05] # x, y is swapped
-    moveRelRotPt(group, point_up, org_pose, 0.05)
+    point_up = [side_cut_1[0][0], side_cut_1[0][1], speed_move] # x, y is swapped
+    moveRelRotPt(group, point_up, org_pose, speed_move)
     rospy.sleep(1.0)
 
-    moveRelRotPt(group, side_cut_1[0], org_pose, 0.05)
+    moveRelRotPt(group, side_cut_1[0], org_pose, speed_move)
     for pt in  side_cut_1:
-        moveRelRotPt(group, pt, org_pose, 0.02)
+        moveRelRotPt(group, pt, org_pose, speed_cut)
     print "finished!"
 # def setio_callback(req):
 #     # req

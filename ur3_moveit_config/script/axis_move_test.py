@@ -33,26 +33,28 @@ def axis_move_test():
 
     print "current joint values:  ", group.get_current_joint_values()
     print "current positino:  \n", group.get_current_pose().pose.position
-
+    print "planning time: " , group.get_planning_time()
+    print "planning frame: ", group.get_planning_frame()
+    print " goal torleara" , group.get_goal_tolerance()
     group_variable_values = [-5.403968636189596, -1.7618020216571253, -1.6557276884662073, 3.3749208450317383, -0.8409798781024378, -3.101166311894552]
-    moveJoint(group, group_variable_values, 0.05)
-
-    print "============ Going up"
-    moveRelativePt(group, [0.0, 0.0, 0.05], 0.05)
-    # moveRelativePt(group, [-0.08, -0.0, 0.0172100525103], 0.01)
-
-    print "============ move` 1"
-    point_1 = [0, -0.15, -0.04]
-    moveRelativePt(group, point_1, 0.05)
-    rospy.sleep(3)
-    print "============ Going up"
-    moveRelativePt(group, [0.0, 0.0, 0.05], 0.05)
-
-    print "============ move` 2"
-    point_1 = [0, 0.3, -0.04]
-    moveRelativePt(group, point_1, 0.05)
-    print "============ Going up"
-    moveRelativePt(group, [0.0, 0.0, 0.05], 0.05)
+    # moveJoint(group, group_variable_values, 0.05)
+    #
+    # print "============ Going up"
+    # moveRelativePt(group, [0.0, 0.0, 0.05], 0.05)
+    # # moveRelativePt(group, [-0.08, -0.0, 0.0172100525103], 0.01)
+    #
+    # print "============ move` 1"
+    # point_1 = [0, -0.15, -0.04]
+    # moveRelativePt(group, point_1, 0.05)
+    # rospy.sleep(3)
+    # print "============ Going up"
+    # moveRelativePt(group, [0.0, 0.0, 0.05], 0.05)
+    #
+    # print "============ move` 2"
+    # point_1 = [0, 0.3, -0.04]
+    # moveRelativePt(group, point_1, 0.05)
+    # print "============ Going up"
+    # moveRelativePt(group, [0.0, 0.0, 0.05], 0.05)
 
 def moveJoint(group, group_variable_values, speed):
     group.set_start_state_to_current_state()
