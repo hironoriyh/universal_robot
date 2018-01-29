@@ -20,18 +20,22 @@ from std_msgs.msg import String
 
 def milling_paths():
 
-    print "============ Starting tutorial setup"
+    print "============ setup"
     moveit_commander.roscpp_initialize(sys.argv)
-    rospy.init_node('move_group_python_interface_tutorial', anonymous=True)
+    rospy.init_node('moveit_milling', anonymous=True)
     ## the robot as a whole.
     robot = moveit_commander.RobotCommander()
     scene = moveit_commander.PlanningSceneInterface()
     group = moveit_commander.MoveGroupCommander("manipulator")
+    # interface = group.MoveGroupInterface()
+    # group.setPlannerId('')
+    # group.setPlanningTime(10)
+
     display_trajectory_publisher = rospy.Publisher(
                                     '/move_group/display_planned_path',
                                     moveit_msgs.msg.DisplayTrajectory,
                                     queue_size=20)
-
+    # group.set
     print "current joint values:  ", group.get_current_joint_values()
     group_variable_values = [-5.554026071225302, -1.7539408842669886, -1.6314790884601038, 3.347646713256836, -0.9896319548236292, -3.108539406453268]
     # group_variable_values = [-5.331279043351309, -1.381209675465719, -2.1003029982196253, 3.4650821685791016, -0.5601938406573694, -3.156151835118429]
@@ -43,6 +47,7 @@ def milling_paths():
     moveRelativePt(group, [0.0, 0.0, 0.05], 0.05)
 
     print "============ Side cut 1"
+    # side_cut_1 =  np.loadtxt('brT/1_first_sidecut_T1.txt')*0.001
     side_cut_1 =  np.loadtxt('brT/2_second_sidecut_T1.txt')*0.001
     point_up = [side_cut_1[0][0], side_cut_1[0][1], 0.05] # x, y is swapped
     moveRelRotPt(group, point_up, org_pose, 0.05)
@@ -50,7 +55,7 @@ def milling_paths():
 
     moveRelRotPt(group, side_cut_1[0], org_pose, 0.05)
     for pt in  side_cut_1:
-        moveRelRotPt(group, pt, org_pose, 0.01)
+        moveRelRotPt(group, pt, org_pose, 0.02)
     print "finished!"
 # def setio_callback(req):
 #     # req

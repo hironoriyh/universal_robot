@@ -10,7 +10,18 @@
 
   <!-- arm -->
   <xacro:ur3_robot prefix="" joint_limited="true"/>
-	
+
+  <!-- Set initial joint angles -->
+  <gazebo>
+    <plugin name="ur_initial_pose" filename="libInitialPosePlugin.so">
+      <shoulder_pan_joint>3.14</shoulder_pan_joint>
+      <shoulder_lift_joint>-1.22</shoulder_lift_joint>
+      <elbow_joint>-1.9</elbow_joint>
+      <wrist_1_joint>-1.57</wrist_1_joint>
+      <wrist_2_joint>1.50</wrist_2_joint>
+      <wrist_3_joint>0.0</wrist_3_joint>
+    </plugin>
+  </gazebo>
 
   <link name="world" />
 
