@@ -31,8 +31,11 @@ def milling_paths():
     group = moveit_commander.MoveGroupCommander("manipulator")
     # interface = group.MoveGroupInterface()
     # group.setPlannerId('')
-    group.setPlanningTime(10)
-
+    group.set_planning_time(10)
+    group.set_planner_id('RRTkConfigDefault')
+    group.allow_replanning(True)
+    group.set_goal_position_tolerance(0.01)
+    print group.get_goal_tolerance()
     display_trajectory_publisher = rospy.Publisher(
                                     '/move_group/display_planned_path',
                                     moveit_msgs.msg.DisplayTrajectory,
@@ -47,16 +50,23 @@ def milling_paths():
     print "============ Going up"
     moveRelativePt(group, [0.0, 0.0, 0.05], speed_move)
 
-    print "============ Side cut 1"
+    print "============ move above"
     # side_cut_1 =  np.loadtxt('brT/1_first_sidecut_T1.txt')*0.001
     side_cut_1 =  np.loadtxt('brT/2_second_sidecut_T1.txt')*0.001
-    point_up = [side_cut_1[0][0], side_cut_1[0][1], speed_move] # x, y is swapped
+    point_up = [side_cut_1[0][0], side_cut_1[0][1], 0.0] # x, y is swapped
     moveRelRotPt(group, point_up, org_pose, speed_move)
     rospy.sleep(1.0)
 
+    print "============ move down"
     moveRelRotPt(group, side_cut_1[0], org_pose, speed_move)
-    for pt in  side_cut_1:
-        moveRelRotPt(group, pt, org_pose, speed_cut)
+    print 'length of text' , len(side_cut_1), len(side_cut_1)/8
+    new_array = np.array_split(side_cut_1, len(side_cut_1)/8)
+
+    print "============ side cut"
+    for points in new_array:
+        moveCartesianPath(group, points, org_pose, speed_cut, 0.001)
+    # for pt in  side_cut_1:
+    #     moveRelRotPt(group, pt, org_pose, speed_cut)
     print "finished!"
 # def setio_callback(req):
 #     # req
@@ -67,34 +77,34 @@ def moveJoint(group, group_variable_values, speed):
     group.clear_pose_targets()
     print "============ Joint values: ", group_variable_values
     group.set_joint_value_target(group_variable_values)
-    plan1 = group.plan()
+    plan = group.plan()
+    # print plan
     group.go(wait=True)
     # group.execute(plan1)
     rospy.sleep(1)
 
 def moveCartesianPath(group, pts, org_pose, speed, steps):
-    group.set_max_velocity_scaling_factor(speed)
+    # group.set_max_velocity_scaling_factor(speed)
     waypoints = []
     waypoints.append(group.get_current_pose().pose)
 
     # print "------------------- current pose -----", pose_target.position
     for pt in pts:
         pose_target = copy.deepcopy(org_pose)
-        pose_target.position.x += pt[1]
+        pose_target.position.x -= pt[1]
         pose_target.position.y += pt[0]
         pose_target.position.z += pt[2]
         waypoints.append(pose_target)
-        print pose_target.position.z
+        print pose_target.position.x, pose_target.position.y, pose_target.position.z
 
     (plan, fraction) = group.compute_cartesian_path(
                                  waypoints,   # waypoints to follow
                                  steps,        # eef_step
                                  0.0)         # jump_threshold
-    # group.go(wait=True)
-    print 'cartesian path start cutting!'
-    # group.go(wait=True)
+    print 'cartesian path start cutting!', fraction
+    group.go(wait=True)
     group.execute(plan)
-    rospy.sleep(1)
+    rospy.sleep(0.5)
     print 'cartesian path finished!'
 
 def moveRelRotPt(group, pt, org_pose, speed):
@@ -112,7 +122,9 @@ def moveRelRotPt(group, pt, org_pose, speed):
     pose_target_stamped = group.get_current_pose()
     pose_target_stamped.pose = pose_target
     group.set_pose_target(pose_target)
-    plan1 = group.plan()
+    # group.set_position_target(0.01, 0.01, 0.1)
+    plan = group.plan()
+    # print plan
     group.go(wait=True)
     rospy.sleep(0.01)
 
@@ -130,7 +142,8 @@ def moveRelativePt(group, pt, speed):
     # print "------------------- after update pose -----", pose_target.position
 
     group.set_pose_target(pose_target)
-    plan1 = group.plan()
+    plan = group.plan()
+    # print plan
     group.go(wait=True)
     rospy.sleep(1)
 
