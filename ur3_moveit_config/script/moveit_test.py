@@ -20,7 +20,7 @@ from std_msgs.msg import String
 
 def milling_paths():
 
-    speed_move = 1.0
+    speed_move = 0.5
     speed_cut = 0.1
     print "============ setup"
     moveit_commander.roscpp_initialize(sys.argv)
@@ -35,15 +35,18 @@ def milling_paths():
     group.set_planner_id('RRTkConfigDefault')
     group.allow_replanning(True)
     group.set_goal_position_tolerance(0.01)
-    print group.get_goal_tolerance()
     display_trajectory_publisher = rospy.Publisher(
                                     '/move_group/display_planned_path',
                                     moveit_msgs.msg.DisplayTrajectory,
                                     queue_size=20)
-    # group.set
-    print "current joint values:  ", group.get_current_joint_values()
-    group_variable_values = [-5.5, -1.753, -1.63, 3.347, -0.9896, -3.108]
+
+
+
+    print "current joint values: \n", group.get_current_joint_values()
+    print "current pose:   \n", group.get_current_pose().pose
+    group_variable_values = [0.13155832886695862, -1.842337433491842, -1.36857778230776, -3.084980312977926, -2.13796836534609, -3.1466363112079065]
     moveJoint(group, group_variable_values, speed_move)
+    move_perpendicular(group, speed_move)
     org_pose = group.get_current_pose().pose
     print " org pos: " , org_pose
 
@@ -52,24 +55,35 @@ def milling_paths():
 
     print "============ move above"
     # side_cut_1 =  np.loadtxt('brT/1_first_sidecut_T1.txt')*0.001
-    side_cut_1 =  np.loadtxt('brT/2_second_sidecut_T1.txt')*0.001
+    side_cut_1 =  np.loadtxt('brT/1_first_sidecut_T1.txt')*0.001
     point_up = [side_cut_1[0][0], side_cut_1[0][1], 0.0] # x, y is swapped
     moveRelRotPt(group, point_up, org_pose, speed_move)
     rospy.sleep(1.0)
 
     print "============ move down"
     moveRelRotPt(group, side_cut_1[0], org_pose, speed_move)
-    print 'length of text' , len(side_cut_1), len(side_cut_1)/8
+    # print 'length of text' , len(side_cut_1), len(side_cut_1)/8
     new_array = np.array_split(side_cut_1, len(side_cut_1)/8)
 
     print "============ side cut"
-    for points in new_array:
-        moveCartesianPath(group, points, org_pose, speed_cut, 0.001)
-    # for pt in  side_cut_1:
-    #     moveRelRotPt(group, pt, org_pose, speed_cut)
+    # for points in new_array:
+    #     moveCartesianPath(group, points, org_pose, speed_cut, 0.001)
+    for pt in  side_cut_1:
+        moveRelRotPt(group, pt, org_pose, speed_cut)
     print "finished!"
+
 # def setio_callback(req):
 #     # req
+
+def move_perpendicular(group, speed_move):
+    pose_target = group.get_current_pose()
+    pose_target.pose.orientation.x = 0.0
+    pose_target.pose.orientation.y = 0.0
+    pose_target.pose.orientation.z = -0.94
+    pose_target.pose.orientation.w = 0.341
+    moveAbsPose(group, pose_target, speed_move)
+    print "joint values after perpendicular move: \n", group.get_current_joint_values()
+
 
 def moveJoint(group, group_variable_values, speed):
     group.set_start_state_to_current_state()
@@ -147,20 +161,14 @@ def moveRelativePt(group, pt, speed):
     group.go(wait=True)
     rospy.sleep(1)
 
-def moveAbsPt(group, pt, speed):
+def moveAbsPose(group, pose_target, speed):
     # if(speed):
     group.set_max_velocity_scaling_factor(speed)
 
     group.clear_pose_targets()
     group.set_start_state_to_current_state()
-    pose_target = group.get_current_pose().pose
-
-    pose_target.position.x = pt[0]
-    pose_target.position.y = pt[1]
-    pose_target.position.z = pt[2]
-
     group.set_pose_target(pose_target)
-    plan1 = group.plan()
+    plan = group.plan()
     group.go(wait=True)
     rospy.sleep(1)
 
