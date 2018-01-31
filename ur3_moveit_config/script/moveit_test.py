@@ -20,7 +20,7 @@ from std_msgs.msg import String
 
 def milling_paths():
 
-    speed_move = 0.5
+    speed_move = 1.0
     speed_cut = 0.1
     print "============ setup"
     moveit_commander.roscpp_initialize(sys.argv)
@@ -31,10 +31,10 @@ def milling_paths():
     group = moveit_commander.MoveGroupCommander("manipulator")
     # interface = group.MoveGroupInterface()
     # group.setPlannerId('')
-    group.set_planning_time(10)
+    group.set_planning_time(3)
     group.set_planner_id('RRTkConfigDefault')
     group.allow_replanning(True)
-    group.set_goal_position_tolerance(0.01)
+    # group.set_goal_position_tolerance(0.001)
     display_trajectory_publisher = rospy.Publisher(
                                     '/move_group/display_planned_path',
                                     moveit_msgs.msg.DisplayTrajectory,
@@ -44,7 +44,8 @@ def milling_paths():
 
     print "current joint values: \n", group.get_current_joint_values()
     print "current pose:   \n", group.get_current_pose().pose
-    group_variable_values = [0.13155832886695862, -1.842337433491842, -1.36857778230776, -3.084980312977926, -2.13796836534609, -3.1466363112079065]
+    group_variable_values = [
+0.45838239789009094, -1.8014166990863245, -1.5130813757525843, -2.9690874258624476, -1.805875603352682, -3.1426265875445765                             ]
     moveJoint(group, group_variable_values, speed_move)
     move_perpendicular(group, speed_move)
     org_pose = group.get_current_pose().pose
@@ -53,22 +54,25 @@ def milling_paths():
     print "============ Going up"
     moveRelativePt(group, [0.0, 0.0, 0.05], speed_move)
 
-    print "============ move above"
+    print "============ move to above"
     side_cut_1 =  np.loadtxt('brT/2_second_sidecut_T1.txt')*0.001
     new_arrays = np.array_split(side_cut_1, 35)
 
-    point_up = [new_arrays[0][0][0], new_arrays[0][0][1], 0.0] # x, y is swapped
+    first_point = new_arrays[0][0]
+    point_up = [first_point[0], first_point[1], 0.05] # x, y is swapped
+    print point_up
+    # point_up = [0.05, 0.0, 0.05] # x, y is swapped
     moveRelRotPt(group, point_up, org_pose, speed_move)
     rospy.sleep(1.0)
 
     print "============ move down"
-    moveRelRotPt(group, [0.1, 0.0, 0.0], org_pose, speed_move)
+    moveRelRotPt(group, [first_point[0], first_point[1], 0.0], org_pose, speed_move)
 
-    # print "============ side cut"
-    # for layer in  new_arrays:
-    #     for pt in layer:
-    #         moveRelRotPt(group, pt, org_pose, speed_cut)
-    # print "finished!"
+    print "============ side cut"
+    for layer in  new_arrays:
+        for pt in layer:
+            moveRelRotPt(group, pt, org_pose, speed_cut)
+    print "finished!"
 
 # def setio_callback(req):
 #     # req
