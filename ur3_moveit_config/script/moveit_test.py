@@ -3,7 +3,7 @@
 ## BEGIN_SUB_TUTORIAL imports
 ##
 ## To use the python interface to move_group, import the moveit_commander
-## module.  We also import rospy and some messages that we will use.
+# module.  We also import rospy and some messages that we will use.
 import sys
 import copy
 import rospy
@@ -20,8 +20,14 @@ from std_msgs.msg import String
 
 def milling_paths():
 
-    speed_move = 1.0
-    speed_cut = 0.1
+    speed_move = 0.05
+    speed_cut = 0.01
+
+    side_cut_1 =  np.loadtxt('brT/1_sidecut_T1.txt')*0.001
+    num_of_layers =  len(side_cut_1)/8
+    new_arrays = np.array_split(side_cut_1, num_of_layers)
+    # print new_arrays
+
     print "============ setup"
     moveit_commander.roscpp_initialize(sys.argv)
     rospy.init_node('moveit_milling', anonymous=True)
@@ -33,46 +39,79 @@ def milling_paths():
     # group.setPlannerId('')
     group.set_planning_time(3)
     group.set_planner_id('RRTkConfigDefault')
-    group.allow_replanning(True)
+    # group.allow_replanning(True)
     # group.set_goal_position_tolerance(0.001)
     display_trajectory_publisher = rospy.Publisher(
                                     '/move_group/display_planned_path',
                                     moveit_msgs.msg.DisplayTrajectory,
                                     queue_size=20)
-
-
-
-    print "current joint values: \n", group.get_current_joint_values()
-    print "current pose:   \n", group.get_current_pose().pose
-    group_variable_values = [
-0.45838239789009094, -1.8014166990863245, -1.5130813757525843, -2.9690874258624476, -1.805875603352682, -3.1426265875445765                             ]
-    moveJoint(group, group_variable_values, speed_move)
-    move_perpendicular(group, speed_move)
-    org_pose = group.get_current_pose().pose
-    print " org pos: " , org_pose
-
     print "============ Going up"
-    moveRelativePt(group, [0.0, 0.0, 0.05], speed_move)
+    # moveRelativePt(group, [0.0, 0.0, 0.02], speed_move)
 
-    print "============ move to above"
-    side_cut_1 =  np.loadtxt('brT/1_sidecut_T1.txt')*0.001
-    new_arrays = np.array_split(side_cut_1, len(side_cut_1)/8)
+    current_joint =group.get_current_joint_values()
+    current_pose = group.get_current_pose()
+    waypoints = [ [-0.079067678133,-0.299099613872, 0.256347073052]
+                  [-0.179067678133,-0.299099613872, 0.256347073052]
+                  [-0.029067678133,-0.299099613872, 0.256347073052]
+                  [-0.079067678133,-0.299099613872, 0.256347073052]]
+    waypoints = [ -0.079067678133,-0.299099613872, 0.256347073052]
 
-    first_point = new_arrays[0][0]
-    point_up = [first_point[0], first_point[1], 0.05] # x, y is swapped
-    print point_up
-    # point_up = [0.05, 0.0, 0.05] # x, y is swapped
-    moveRelRotPt(group, point_up, org_pose, speed_move)
+    move_x = copy.deepcopy(current_pose)
+    move_x.pose.position.x = -0.299099613872
+    move_x.pose.position.y = -0.079067678133
+    move_x.pose.position.z = 0.256347073052
+    moveAbsPose(group, move_x, speed_move)
+
+    move_x.pose.position.y = -0.079067678133 +0.1
+    moveAbsPose(group, move_x, speed_move)
+    rospy.sleep(1.0)
+    move_x.pose.position.y = -0.079067678133 -0.1
+    moveAbsPose(group, move_x, speed_move)
+
+    rospy.sleep(1.0)
+    move_x.pose.position.y = -0.079067678133
+    moveAbsPose(group, move_x, speed_move)
+    moveAbsPose(group, move_x, speed_move)
+
+    move_x.pose.position.y = -0.079067678133 -0.1
+    moveAbsPose(group, move_x, speed_move)
+    moveAbsPose(group, move_x, speed_move)
     rospy.sleep(1.0)
 
-    print "============ move down"
-    moveRelRotPt(group, [first_point[0], first_point[1], 0.0], org_pose, speed_move)
-
-    print "============ side cut"
-    for layer in  new_arrays:
-        for pt in layer:
-            moveRelRotPt(group, pt, org_pose, speed_cut)
-    print "finished!"
+    move_x.pose.position.y = -0.079067678133
+    moveAbsPose(group, move_x, speed_move)
+    moveAbsPose(group, move_x, speed_move)
+    rospy.sleep(1.0)
+    #
+    # print "current joint values: \n",current_joint
+    # print "current pose:   \n", current_pose
+    # group_variable_values = [
+    # 0.4557068943977356, -1.8288734594928187, -1.5711491743670862, -2.884554688130514, -1.8080742994891565, -3.1415138880359095
+    # ]
+    # moveJoint(group, group_variable_values, speed_move)
+    # move_perpendicular(group, speed_move)
+    # org_pose = group.get_current_pose().pose
+    # print " org pos: " , org_pose
+    #
+    # print "============ Going up"
+    # moveRelativePt(group, [0.0, 0.0, 0.03], speed_move)
+    #
+    # print "============ move to above"
+    # first_point = new_arrays[0][0]
+    # point_up = [first_point[0], first_point[1], 0.05] # x, y is swapped
+    # print point_up
+    # # point_up = [0.05, 0.0, 0.05] # x, y is swapped
+    # moveRelRotPt(group, point_up, org_pose, speed_move)
+    # rospy.sleep(1.0)
+    #
+    # print "============ move down"
+    # moveRelRotPt(group, [first_point[0], first_point[1], 0.0], org_pose, speed_move)
+    #
+    # print "============ side cut"
+    # for layer in  new_arrays:
+    #     for pt in layer:
+    #         moveRelRotPt(group, pt, org_pose, speed_cut)
+    # print "finished!"
 
 # def setio_callback(req):
 #     # req
@@ -166,7 +205,7 @@ def moveRelativePt(group, pt, speed):
 def moveAbsPose(group, pose_target, speed):
     # if(speed):
     group.set_max_velocity_scaling_factor(speed)
-
+    print 'going to: \n', pose_target.pose.position
     group.clear_pose_targets()
     group.set_start_state_to_current_state()
     group.set_pose_target(pose_target)
