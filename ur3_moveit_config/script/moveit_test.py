@@ -55,8 +55,8 @@ def milling_paths():
     moveRelativePt(group, [0.0, 0.0, 0.05], speed_move)
 
     print "============ move to above"
-    side_cut_1 =  np.loadtxt('brT/2_second_sidecut_T1.txt')*0.001
-    new_arrays = np.array_split(side_cut_1, 35)
+    side_cut_1 =  np.loadtxt('brT/1_sidecut_T1.txt')*0.001
+    new_arrays = np.array_split(side_cut_1, len(side_cut_1)/8)
 
     first_point = new_arrays[0][0]
     point_up = [first_point[0], first_point[1], 0.05] # x, y is swapped

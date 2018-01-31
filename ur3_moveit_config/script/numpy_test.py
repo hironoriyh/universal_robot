@@ -3,12 +3,13 @@ import numpy as np
 # side_cut_1 =  np.loadtxt('brT/2_second_sidecut_T1.txt')*0.001
 
 side_cut_1 =  np.loadtxt('brT/2_second_sidecut_T1.txt')*0.001
-new_arrays = np.array_split(side_cut_1, 35)
+print len(side_cut_1)/8
+new_arrays = np.array_split(side_cut_1, len(side_cut_1)/8)
 print np.shape(new_arrays)
-for layer  in  new_arrays:
-    # print len(pt)
-    for pt in layer:
-        print pt[2]
+# for layer  in  new_arrays:
+#     # print len(pt)
+#     for pt in layer:
+#         print pt[2]
 
 # print len(new_array)
 #
