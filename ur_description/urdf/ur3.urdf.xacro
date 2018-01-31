@@ -61,8 +61,8 @@
 
 
   <xacro:macro name="ur3_robot" params="prefix joint_limited">
-  
-  	    
+
+
     <joint name="${prefix}base_plate" type="fixed">
       <parent link="${prefix}base_link" />
       <child link = "${prefix}base_plate_link" />
@@ -75,7 +75,7 @@
           <box size="1.0 1.0 0.01"/>
         </geometry>
       </visual>
-        
+
       <collision>
         <geometry>
           <box size="1.0 1.0 0.01"/>
@@ -315,7 +315,7 @@
         <origin rpy="0 0 0" xyz="-0.01 0 0"/>
       </collision>
     </link>
-    
+
     <link name="${prefix}spindle">
         <visual>
 	   	     <geometry>
@@ -331,13 +331,34 @@
 	        </geometry>
       	</collision>
   	</link>
-  
+
     <joint name="${prefix}spindle" type="fixed">
 	      <origin xyz="0 0 0" rpy="0 0 0"/>
 	      <parent link="${prefix}tool0"/>
 	      <child link="${prefix}spindle"/>
+	  </joint>
+
+    <link name="${prefix}box_link">
+        <visual>
+	   	     <geometry>
+	          <mesh filename="package://ur_description/meshes/ur3/visual/box.stl"/>
+	        </geometry>
+	        <material name="LightGrey">
+	          <color rgba="0.7 0.7 0.7 1.0"/>
+	        </material>
+      	</visual>
+      	<collision>
+	        <geometry>
+	          <mesh filename="package://ur_description/meshes/ur3/visual/box.stl"/>
+	        </geometry>
+      	</collision>
+  	</link>
+
+    <joint name="${prefix}box_joint" type="fixed">
+	      <origin xyz="0 0 0" rpy="0 0 0"/>
+	      <parent link="${prefix}world"/>
+	      <child link="${prefix}box_link"/>
 	</joint>
-	  
 
     <xacro:ur_arm_transmission prefix="${prefix}" />
     <xacro:ur_arm_gazebo prefix="${prefix}" />
@@ -361,7 +382,7 @@
       <parent link="${prefix}wrist_3_link"/>
       <child link="${prefix}tool0"/>
     </joint>
-    
-   
+
+
   </xacro:macro>
 </robot>

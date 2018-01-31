@@ -54,23 +54,21 @@ def milling_paths():
     moveRelativePt(group, [0.0, 0.0, 0.05], speed_move)
 
     print "============ move above"
-    # side_cut_1 =  np.loadtxt('brT/1_first_sidecut_T1.txt')*0.001
-    side_cut_1 =  np.loadtxt('brT/1_first_sidecut_T1.txt')*0.001
-    point_up = [side_cut_1[0][0], side_cut_1[0][1], 0.0] # x, y is swapped
+    side_cut_1 =  np.loadtxt('brT/2_second_sidecut_T1.txt')*0.001
+    new_arrays = np.array_split(side_cut_1, 35)
+
+    point_up = [new_arrays[0][0][0], new_arrays[0][0][1], 0.0] # x, y is swapped
     moveRelRotPt(group, point_up, org_pose, speed_move)
     rospy.sleep(1.0)
 
     print "============ move down"
-    moveRelRotPt(group, side_cut_1[0], org_pose, speed_move)
-    # print 'length of text' , len(side_cut_1), len(side_cut_1)/8
-    new_array = np.array_split(side_cut_1, len(side_cut_1)/8)
+    moveRelRotPt(group, [0.1, 0.0, 0.0], org_pose, speed_move)
 
-    print "============ side cut"
-    # for points in new_array:
-    #     moveCartesianPath(group, points, org_pose, speed_cut, 0.001)
-    for pt in  side_cut_1:
-        moveRelRotPt(group, pt, org_pose, speed_cut)
-    print "finished!"
+    # print "============ side cut"
+    # for layer in  new_arrays:
+    #     for pt in layer:
+    #         moveRelRotPt(group, pt, org_pose, speed_cut)
+    # print "finished!"
 
 # def setio_callback(req):
 #     # req
