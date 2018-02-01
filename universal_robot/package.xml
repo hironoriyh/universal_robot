@@ -20,8 +20,6 @@
 
   <buildtool_depend>catkin</buildtool_depend>
   <run_depend>ur3_moveit_config</run_depend>
-  <run_depend>ur5_moveit_config</run_depend>
-  <run_depend>ur10_moveit_config</run_depend>
   <run_depend>ur_bringup</run_depend>
   <run_depend>ur_description</run_depend>
   <run_depend>ur_driver</run_depend>
@@ -29,6 +27,8 @@
   <run_depend>ur_kinematics</run_depend>
   <run_depend>ur_msgs</run_depend>
   <run_depend>ur_gazebo_plugins</run_depend>
+  <run_depend>ur3_milling</run_depend>
+
   <export>
     <metapackage/>
   </export>
