@@ -50,38 +50,13 @@ def milling_paths():
 
     current_joint =group.get_current_joint_values()
     current_pose = group.get_current_pose()
-    waypoints = [ [-0.079067678133,-0.299099613872, 0.256347073052]
-                  [-0.179067678133,-0.299099613872, 0.256347073052]
-                  [-0.029067678133,-0.299099613872, 0.256347073052]
+    waypoints = [ [-0.079067678133,-0.299099613872, 0.256347073052],
+                  [-0.179067678133,-0.299099613872, 0.256347073052],
+                  [0.029067678133,-0.299099613872, 0.256347073052],
+                  [-0.079067678133,-0.299099613872, 0.256347073052],
                   [-0.079067678133,-0.299099613872, 0.256347073052]]
-    waypoints = [ -0.079067678133,-0.299099613872, 0.256347073052]
 
-    move_x = copy.deepcopy(current_pose)
-    move_x.pose.position.x = -0.299099613872
-    move_x.pose.position.y = -0.079067678133
-    move_x.pose.position.z = 0.256347073052
-    moveAbsPose(group, move_x, speed_move)
-
-    move_x.pose.position.y = -0.079067678133 +0.1
-    moveAbsPose(group, move_x, speed_move)
-    rospy.sleep(1.0)
-    move_x.pose.position.y = -0.079067678133 -0.1
-    moveAbsPose(group, move_x, speed_move)
-
-    rospy.sleep(1.0)
-    move_x.pose.position.y = -0.079067678133
-    moveAbsPose(group, move_x, speed_move)
-    moveAbsPose(group, move_x, speed_move)
-
-    move_x.pose.position.y = -0.079067678133 -0.1
-    moveAbsPose(group, move_x, speed_move)
-    moveAbsPose(group, move_x, speed_move)
-    rospy.sleep(1.0)
-
-    move_x.pose.position.y = -0.079067678133
-    moveAbsPose(group, move_x, speed_move)
-    moveAbsPose(group, move_x, speed_move)
-    rospy.sleep(1.0)
+    moveCartesianPath(group, waypoints, speed_move, 0.0002)
     #
     # print "current joint values: \n",current_joint
     # print "current pose:   \n", current_pose
@@ -138,17 +113,17 @@ def moveJoint(group, group_variable_values, speed):
     # group.execute(plan1)
     rospy.sleep(1)
 
-def moveCartesianPath(group, pts, org_pose, speed, steps):
+def moveCartesianPath(group, pts,  speed, steps):
     # group.set_max_velocity_scaling_factor(speed)
     waypoints = []
     waypoints.append(group.get_current_pose().pose)
 
     # print "------------------- current pose -----", pose_target.position
     for pt in pts:
-        pose_target = copy.deepcopy(org_pose)
-        pose_target.position.x -= pt[1]
-        pose_target.position.y += pt[0]
-        pose_target.position.z += pt[2]
+        pose_target = copy.deepcopy(group.get_current_pose().pose)
+        pose_target.position.x = pt[1]
+        pose_target.position.y = pt[0]
+        pose_target.position.z = pt[2]
         waypoints.append(pose_target)
         print pose_target.position.x, pose_target.position.y, pose_target.position.z
 
