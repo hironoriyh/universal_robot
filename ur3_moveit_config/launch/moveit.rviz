@@ -8,7 +8,7 @@ Panels:
         - /MotionPlanning1/Planned Path1
         - /PlanningScene1
       Splitter Ratio: 0.5
-    Tree Height: 551
+    Tree Height: 426
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -334,25 +334,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 1.49271083
+      Distance: 2.34880948
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -0.221554756
-        Y: 0.00962240808
-        Z: 0.0336188897
+        X: -0.247996405
+        Y: 0.110221952
+        Z: 0.0506050847
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.0500000007
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.0303980522
+      Pitch: 0.235397995
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 3.4035852
+      Yaw: 0.443585455
     Saved: ~
 Window Geometry:
   Displays:
@@ -372,5 +372,5 @@ Window Geometry:
   Views:
     collapsed: true
   Width: 1451
-  X: 98
+  X: 1549
   Y: 36
