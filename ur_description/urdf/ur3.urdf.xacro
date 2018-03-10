@@ -285,6 +285,27 @@
       <origin xyz="0.0 ${wrist_3_length} 0.0" rpy="0.0 0.0 ${pi/2.0}" />
     </joint>
 
+    <link name="${prefix}front_link">
+      <!-- <visual>
+        <geometry>
+          <box size="0.01 0.01 0.01"/>
+        </geometry>
+        <origin rpy="0 0 0" xyz="-0.01 0 0"/>
+      </visual> -->
+      <collision>
+        <geometry>
+          <box size="0.8 0.01 0.7"/>
+        </geometry>
+        <origin rpy="0 0 0" xyz="-0.23 0.25 0.35"/>
+      </collision>
+    </link>
+
+    <joint name="${prefix}front_panel_joint" type="fixed">
+      <parent link="${prefix}world" />
+      <child link = "${prefix}front_link" />
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+    </joint>
+
     <link name="${prefix}ee_link">
       <collision>
         <geometry>
