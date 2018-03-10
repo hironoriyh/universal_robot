@@ -7,8 +7,8 @@ Panels:
         - /Global Options1
         - /MotionPlanning1/Planned Path1
         - /TF1
-        - /TF1/Frames1
-      Splitter Ratio: 0.5
+        - /PointCloud21
+      Splitter Ratio: 0.855319142
     Tree Height: 594
   - Class: rviz/Selection
     Name: Selection
@@ -28,7 +28,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: ""
+    SyncSource: PointCloud2
 Visualization Manager:
   Class: ""
   Displays:
@@ -348,7 +348,7 @@ Visualization Manager:
       Marker Topic: /object_mesh
       Name: Marker
       Namespaces:
-        {}
+        branch_2: true
       Queue Size: 100
       Value: true
     - Class: rviz/TF
@@ -357,10 +357,24 @@ Visualization Manager:
       Frames:
         All Enabled: false
         base:
-          Value: false
+          Value: true
         base_link:
-          Value: false
+          Value: true
         box_link:
+          Value: false
+        camera_depth_frame:
+          Value: false
+        camera_depth_optical_frame:
+          Value: true
+        camera_ir_frame:
+          Value: false
+        camera_ir_optical_frame:
+          Value: false
+        camera_link:
+          Value: true
+        camera_rgb_frame:
+          Value: false
+        camera_rgb_optical_frame:
           Value: false
         ee_link:
           Value: false
@@ -384,7 +398,7 @@ Visualization Manager:
           Value: false
         wrist_3_link:
           Value: false
-      Marker Scale: 1
+      Marker Scale: 0.200000003
       Name: TF
       Show Arrows: true
       Show Axes: true
@@ -408,8 +422,48 @@ Visualization Manager:
                             {}
           box_link:
             {}
+          camera_link:
+            camera_depth_frame:
+              camera_depth_optical_frame:
+                {}
+            camera_ir_frame:
+              camera_ir_optical_frame:
+                {}
+            camera_rgb_frame:
+              camera_rgb_optical_frame:
+                {}
       Update Interval: 0
       Value: true
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/PointCloud2
+      Color: 255; 255; 255
+      Color Transformer: RGB8
+      Decay Time: 0
+      Enabled: false
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Max Intensity: 4096
+      Min Color: 0; 0; 0
+      Min Intensity: 0
+      Name: PointCloud2
+      Position Transformer: XYZ
+      Queue Size: 10
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.00300000003
+      Style: Flat Squares
+      Topic: /camera/depth_registered/points
+      Unreliable: false
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: false
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -434,34 +488,34 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 1.56059647
+      Distance: 1.918998
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -0.267259836
-        Y: 0.187841773
-        Z: 0.0562047139
+        X: -0.309619188
+        Y: -0.0355879515
+        Z: 0.139989555
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.0500000007
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.579796195
+      Pitch: 0.65979588
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 0.061773818
+      Yaw: 0.00177194271
     Saved: ~
 Window Geometry:
   Displays:
-    collapsed: true
+    collapsed: false
   Height: 729
-  Hide Left Dock: true
+  Hide Left Dock: false
   Hide Right Dock: true
   Motion Planning:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd00000004000000000000038200000293fc0200000009fb000000100044006900730070006c006100790073000000002800000293000000dd00fffffffb0000001200530065006c0065006300740069006f006e00000001e10000009b0000006400fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed0000020300000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e0067000000010b000001cc000001cc00ffffff000000010000013200000598fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073000000003400000598000000b000fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b2000000000000000000000002000004cf000000effc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000004b00000003efc0100000002fb0000000800540069006d00650000000000000004b00000030000fffffffb0000000800540069006d00650100000000000004500000000000000000000005150000029300000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd00000004000000000000016f00000293fc0200000009fb000000100044006900730070006c006100790073010000002800000293000000dd00fffffffb0000001200530065006c0065006300740069006f006e00000001e10000009b0000006400fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed0000020300000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e0067000000010b000001cc000001cc00ffffff000000010000013200000598fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073000000003400000598000000b000fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b2000000000000000000000002000004cf000000effc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000004b00000003efc0100000002fb0000000800540069006d00650000000000000004b00000030000fffffffb0000000800540069006d00650100000000000004500000000000000000000003a00000029300000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Time:
