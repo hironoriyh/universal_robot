@@ -507,19 +507,7 @@ Visualization Manager:
           Value: true
         box_link:
           Value: false
-        camera_depth_frame:
-          Value: true
-        camera_depth_optical_frame:
-          Value: true
-        camera_ir_frame:
-          Value: true
-        camera_ir_optical_frame:
-          Value: true
         camera_link:
-          Value: true
-        camera_rgb_frame:
-          Value: true
-        camera_rgb_optical_frame:
           Value: true
         ee_link:
           Value: false
@@ -555,35 +543,27 @@ Visualization Manager:
       Tree:
         object_frame:
           camera_link:
-            camera_depth_frame:
-              camera_depth_optical_frame:
+            {}
+        world:
+          base_link:
+            base:
+              tool0_controller:
                 {}
-            camera_ir_frame:
-              camera_ir_optical_frame:
-                {}
-            camera_rgb_frame:
-              camera_rgb_optical_frame:
-                {}
-          world:
-            base_link:
-              base:
-                tool0_controller:
-                  {}
-              shoulder_link:
-                upper_arm_link:
-                  forearm_link:
-                    wrist_1_link:
-                      wrist_2_link:
-                        wrist_3_link:
-                          ee_link:
+            shoulder_link:
+              upper_arm_link:
+                forearm_link:
+                  wrist_1_link:
+                    wrist_2_link:
+                      wrist_3_link:
+                        ee_link:
+                          {}
+                        tool0:
+                          spindle:
                             {}
-                          tool0:
-                            spindle:
-                              {}
-            box_link:
-              {}
-            front_link:
-              {}
+          box_link:
+            {}
+          front_link:
+            {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -683,5 +663,5 @@ Window Geometry:
   Views:
     collapsed: true
   Width: 1435
-  X: 1584
+  X: 1565
   Y: 48
